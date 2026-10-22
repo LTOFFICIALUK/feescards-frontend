@@ -75,8 +75,8 @@ export const Shell = ({ children }: { children: ReactNode }) => {
       <footer className="mt-auto px-4 py-6 shadow-[0_-4px_0_0_#B8F34A] sm:px-6">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 pt-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="flex flex-col gap-2 font-mono text-sm text-muted">
-            <a href="https://x.com/feescards" className="text-lime" aria-label="fees.cards on X">
-              x.com/feescards
+            <a href="https://x.com/feesdotcards" className="text-lime" aria-label="fees.cards on X">
+              x.com/feesdotcards
             </a>
             {config?.cursorWallet ? (
               <a href={solscanAccount(config.cursorWallet)} className="break-all text-cream" aria-label="fees.cards wallet on Solscan">
@@ -90,7 +90,7 @@ export const Shell = ({ children }: { children: ReactNode }) => {
               type="button"
               onClick={() => void handleCopy()}
               disabled={!config?.feesMint}
-              className="bg-black px-3 py-3 text-left font-mono text-xs text-cream shadow-pixel disabled:opacity-80"
+              className="break-all bg-black px-3 py-3 text-left font-mono text-xs text-cream shadow-pixel disabled:opacity-80"
               aria-label={config?.feesMint ? "Copy the $FEES contract address" : "$FEES contract is pending"}
             >
               {config?.feesMint ? (copied ? "COPIED" : config.feesMint) : "Pending"}

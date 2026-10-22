@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { api } from "@/lib/api";
-import { solscanAccount } from "@/lib/format";
 import type { Config } from "@/lib/types";
 import { useWallet } from "@/lib/wallet";
 
@@ -78,11 +77,6 @@ export const Shell = ({ children }: { children: ReactNode }) => {
             <a href="https://x.com/feesdotcards" className="text-lime" aria-label="fees.cards on X">
               x.com/feesdotcards
             </a>
-            {config?.cursorWallet ? (
-              <a href={solscanAccount(config.cursorWallet)} className="break-all text-cream" aria-label="fees.cards wallet on Solscan">
-                fees.cards wallet {config.cursorWallet}
-              </a>
-            ) : null}
           </div>
           <div className="flex flex-col gap-2">
             <span className="font-pixel text-[10px] text-lime">$FEES</span>

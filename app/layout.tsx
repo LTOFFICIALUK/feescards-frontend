@@ -14,13 +14,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: "fees.cards",
     description: "Cards that pay you.",
-    images: [{ url: "https://feescards-frontend.vercel.app/og.png", width: 1200, height: 630 }],
+    images: [{ url: "/og.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "fees.cards",
     description: "Cards that pay you.",
-    images: ["https://feescards-frontend.vercel.app/og.png"],
+    images: ["/og.png"],
   },
 };
 

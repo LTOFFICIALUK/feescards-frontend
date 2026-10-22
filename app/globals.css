@@ -25,3 +25,8 @@ select {
   background: #b8f34a;
   color: #122000;
 }
+
+:focus-visible {
+  outline: 4px solid #b8f34a;
+  outline-offset: 2px;
+}

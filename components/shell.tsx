@@ -72,8 +72,8 @@ export const Shell = ({ children }: { children: ReactNode }) => {
         </div>
       </header>
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">{children}</main>
-      <footer className="mt-auto px-4 py-6 sm:px-6">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 border-t-0 pt-4 sm:flex-row sm:items-end sm:justify-between">
+      <footer className="mt-auto px-4 py-6 shadow-[0_-4px_0_0_#B8F34A] sm:px-6">
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 pt-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="flex flex-col gap-2 font-mono text-sm text-muted">
             <a href="https://x.com/feescards" className="text-lime" aria-label="fees.cards on X">
               x.com/feescards

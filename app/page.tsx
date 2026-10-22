@@ -1,15 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { api } from "@/lib/api";
 import { formatSol, solscanAccount, solscanToken, solscanTx } from "@/lib/format";
 import type { Card, Payout } from "@/lib/types";
+import { CardFace } from "@/components/cards";
 import { PixelButton, PixelFrame } from "@/components/ui";
 
 const steps = [
-  { title: "LAUNCH A COIN", body: "A new coin wallet holds the creator fees." },
-  { title: "YOU RIP OR BUY", body: "Rip a pack or buy a card on the market." },
-  { title: "THE CARD PAYS", body: "Your card pays its share in SOL." },
+  { title: "LAUNCH A COIN", body: "A new coin wallet holds the creator fees. You never hold its key." },
+  { title: "YOU RIP OR BUY", body: "Rip a pack or buy a card on the market. The card starts in escrow." },
+  { title: "THE CARD PAYS", body: "Your card pays its share in SOL. Every payout is on Solscan." },
 ];
 
 const HomePage = () => {
@@ -29,11 +31,10 @@ const HomePage = () => {
 
   const slots = Array.from({ length: 12 }, (_, index) => cards?.[index] ?? null);
   const card = cards?.[selected] ?? null;
-  const paid = card ? formatSol(card.paidLamports) : null;
 
   return (
     <div className="flex flex-col gap-10">
-      <section className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      <section className="grid items-start gap-8 lg:grid-cols-2">
         <div className="flex flex-col gap-6">
           <p className="font-pixel text-[10px] leading-6 text-lime">NEW ITEM TYPE: FEE CARD</p>
           <h1 className="font-pixel text-[22px] leading-[1.45] text-cream sm:text-[34px]">
@@ -53,43 +54,65 @@ const HomePage = () => {
         </div>
         <div className="flex flex-col gap-4">
           <div className="grid grid-cols-4 gap-3" aria-label="Fee card inventory">
-            {slots.map((slot, index) =>
-              slot ? (
-                <button
-                  key={slot.id}
-                  type="button"
-                  onClick={() => setSelected(index)}
-                  aria-label={`${slot.symbol} fee card ${slot.number}`}
-                  className={`aspect-square bg-ink p-1 ${selected === index ? "shadow-pixel" : "shadow-pixel-mute"}`}
-                >
-                  {slot.image ? <img src={slot.image} alt="" className="h-full w-full object-cover" /> : null}
-                </button>
-              ) : (
-                <div key={`empty-${index}`} className="aspect-square bg-black shadow-pixel-mute" aria-hidden />
-              ),
-            )}
+            {slots.map((slot, index) => (
+              <button
+                key={slot?.id ?? `slot-${index}`}
+                type="button"
+                onClick={() => setSelected(index)}
+                aria-pressed={selected === index}
+                aria-label={slot ? `${slot.symbol} fee card ${slot.number}` : `Empty fee card slot ${index + 1}`}
+                className="aspect-square"
+              >
+                <CardFace
+                  image={slot?.image}
+                  symbol={slot?.symbol}
+                  number={slot?.number}
+                  tier={slot?.tier}
+                  selected={selected === index}
+                />
+              </button>
+            ))}
           </div>
-          {card ? (
-            <PixelFrame>
-              <p className="font-pixel text-[10px] leading-6 text-lime">
-                {card.symbol}
-                {card.tier ? ` · ${card.tier}` : ""}
-              </p>
-              <p className="mt-3 font-mono text-sm leading-6 text-cream">Fee share {card.share}</p>
-              {paid ? <p className="font-mono text-sm leading-6 text-cream">Paid out {paid}</p> : null}
-              <div className="mt-3 flex flex-wrap gap-3 font-mono text-sm">
-                <a className="text-lime" href={solscanToken(card.mint)} aria-label={`${card.symbol} on Solscan`}>
-                  Solscan ↗
-                </a>
-                {card.asset ? (
-                  <a className="text-lime" href={solscanAccount(card.asset)} aria-label="Card account on Solscan">
-                    Card ↗
-                  </a>
-                ) : null}
+          <PixelFrame>
+            {card ? (
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <div className="h-36 w-28 shrink-0">
+                  <CardFace image={card.image} symbol={card.symbol} number={card.number} tier={card.tier} selected />
+                </div>
+                <div>
+                  <p className="font-pixel text-[10px] leading-6 text-lime">
+                    {card.symbol}
+                    {card.tier ? ` · ${card.tier}` : ""}
+                  </p>
+                  <p className="mt-3 font-mono text-sm leading-6 text-cream">Fee share {card.share}</p>
+                  <p className="font-mono text-sm leading-6 text-cream">Paid out {formatSol(card.paidLamports)}</p>
+                  <p className="font-mono text-sm leading-6 text-cream">Unpaid {formatSol(card.accruedLamports)}</p>
+                  <div className="mt-3 flex flex-wrap gap-3 font-mono text-sm">
+                    <Link className="text-lime" href={`/coin/${card.mint}`}>
+                      Coin
+                    </Link>
+                    <a className="text-lime" href={solscanToken(card.mint)} aria-label={`${card.symbol} on Solscan`}>
+                      Solscan ↗
+                    </a>
+                    {card.asset ? (
+                      <a className="text-lime" href={solscanAccount(card.asset)} aria-label="Card account on Solscan">
+                        Card ↗
+                      </a>
+                    ) : null}
+                  </div>
+                  {card.isSeed ? <p className="mt-3 font-mono text-xs text-muted">Launched by fees.cards</p> : null}
+                </div>
               </div>
-              {card.isSeed ? <p className="mt-3 font-mono text-xs text-muted">Launched by fees.cards</p> : null}
-            </PixelFrame>
-          ) : null}
+            ) : (
+              <div>
+                <p className="font-pixel text-[10px] leading-6 text-lime">FEE CARD</p>
+                <p className="mt-3 font-mono text-sm leading-6 text-cream">
+                  One card holds an equal share of that coin&apos;s creator fees. The holder is paid in SOL.
+                </p>
+                <p className="mt-2 font-mono text-sm leading-6 text-muted">Live cards replace these slots as soon as a coin launches.</p>
+              </div>
+            )}
+          </PixelFrame>
           <PixelFrame>
             {payouts && payouts.length > 0 ? (
               <ul className="flex flex-col gap-3">
